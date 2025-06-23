@@ -1,0 +1,4 @@
+name: autodeploy.yml
+on:
+
+jobs:
