@@ -19,23 +19,33 @@ jobs:
           distribution: temurin
           java-version: 17
 
-      - name: application.yml 추가
+      - name: application yml 추가
         run: |
           mkdir -p src/main/resources || true
-          echo "${{ secrets.APPLICATION_YML }}" > ./src/main/resources/application.yml
-          ls -al ./src/main/resources
-          cat ./src/main/resources/application.yml
+          echo "${{ secrets.APPLICATION_YML }}" > ./src/main/resources/applicaiton.yml
+      #          ls -al ./src/main/resources
+      #          cat ./src/main/resources/applicaiton.yml
 
       - name: jar(실행) 파일 생성하기
         run: |
-          chmod +x ./gradlew
-          ./gradlew clean build
+          chmod +x ./gradlew   # 실행권한 추가
+          ./gradlew clean build   # 기존 실행 파일 삭제 후 재생성
 
-      - name: 빌드된 jar 파일 이름 변경 및 이동하기
+      - name: 빌드된 jar 파일 이름변경 및 이동하기
         run: |
           pwd
           mv ./build/libs/*SNAPSHOT.jar ./app.jar
           ls -al
 
-#  deploy-job:
-#    runs-on: ubuntu-latest
+  deploy-job:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: app.jar 실행 파일을 ec2 로 전송하기
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          user: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_KEY }}
+          source: ./app.jar
+          target: /home/ubuntu/prod/tobe
