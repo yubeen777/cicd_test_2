@@ -36,3 +36,6 @@ jobs:
           pwd
           mv ./build/libs/*SNAPSHOT.jar ./app.jar
           ls -al
+
+#  deploy-job:
+#    runs-on: ubuntu-latest
